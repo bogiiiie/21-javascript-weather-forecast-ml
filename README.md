@@ -5,7 +5,7 @@ Get real-time weather information, 3-hour forecasts, and AI-powered temperature 
 
 Crafted by **[Stephen William G. De Jesus](https://www.facebook.com/stephenwilliam.dejesus.5/)**, this project demonstrates advanced API integration, machine learning algorithms, dynamic data visualization, and responsive design.
 
-🌐 Live Demo: [View Live Demo](https://bogiiiie.github.io/21-javascript-ml-weather-app/)
+🌐 Live Demo: [View Live Demo](https://bogiiiie.github.io/21-javascript-weather-forecast-ml/)
 
 ---
 
