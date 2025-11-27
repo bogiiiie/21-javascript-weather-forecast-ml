@@ -81,45 +81,6 @@ async function getCurrentWeather(city) {
     }
 }
 
-async function getHistoricalWeather(lat, lon, daysBack = 7) {
-    try {
-        const historicalData = [];
-        const now = Math.floor(Date.now() / 1000);
-        
-        // Fetch historical data for each day
-        for (let i = 1; i <= daysBack; i++) {
-            const timestamp = now - (i * 86400); // 86400 seconds = 1 day
-            
-            try {
-                const response = await fetch(
-                    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
-                );
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    historicalData.push({
-                        day: daysBack - i,
-                        temp: data.main.temp,
-                        date: new Date(timestamp * 1000),
-                        humidity: data.main.humidity,
-                        conditions: data.weather[0].description
-                    });
-                }
-            } catch (err) {
-                console.warn(`Could not fetch data for day ${i}:`, err.message);
-            }
-            
-            // Small delay to avoid rate limiting
-            await new Promise(resolve => setTimeout(resolve, 100));
-        }
-        
-        return historicalData;
-    } catch (error) {
-        console.error(`Historical Weather Error: ${error.message}`);
-        throw error;
-    }
-}
-
 async function get3HourForecast(city) {
     try {
         const geo = await getGeo(city);
@@ -371,7 +332,7 @@ function updateCurrentWeather(data) {
     document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
     document.getElementById('current-time').textContent = `(${now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })})`;
     
-    // Update weather icon - PROPERLY FIXED
+    // Update weather icon
     console.log('Current weather icon code:', data.current.icon);
     const iconClass = getWeatherIcon(data.current.icon);
     const iconColor = getIconColor(data.current.icon);
@@ -446,7 +407,7 @@ function updateTomorrowPrediction(data) {
     document.getElementById('tomorrow-high').textContent = `${Math.round(data.forecast.tomorrow.high)}°C`;
     document.getElementById('tomorrow-low').textContent = `${Math.round(data.forecast.tomorrow.low)}°C`;
     
-    // Update tomorrow's icon - PROPERLY FIXED
+    // Update tomorrow's icon
     console.log('Tomorrow weather icon code:', data.forecast.tomorrow.icon);
     const iconClass = getWeatherIcon(data.forecast.tomorrow.icon);
     const iconColor = getIconColor(data.forecast.tomorrow.icon);
@@ -462,6 +423,10 @@ function updateTomorrowPrediction(data) {
         iconElement.classList.add(iconClass);
         iconElement.classList.add(iconColor);
     }
+    
+    // Update tomorrow's description
+    const conditions = data.forecast.tomorrow.conditions.charAt(0).toUpperCase() + data.forecast.tomorrow.conditions.slice(1);
+    document.getElementById('tomorrow-desc').textContent = conditions;
     
     // Update ML insights
     const confidence = Math.round(data.ml.prediction.confidence);
@@ -480,7 +445,6 @@ function updateTomorrowPrediction(data) {
     document.getElementById('historical-days').textContent = `Based on ${data.ml.historical.length} data points from forecast`;
     
     // Update conditions
-    const conditions = data.forecast.tomorrow.conditions.charAt(0).toUpperCase() + data.forecast.tomorrow.conditions.slice(1);
     document.getElementById('tomorrow-conditions').textContent = conditions;
     
     // Update temperature chart
@@ -574,14 +538,34 @@ function update3HourForecast(data) {
         const hourTime = new Date(hour.time * 1000);
         const timeString = hourTime.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
         
-        document.getElementById(`hour-${index}-time`).textContent = timeString;
+        const timeEl = document.getElementById(`hour-${index}-time`);
+        const iconEl = document.getElementById(`hour-${index}-icon`);
+        const tempEl = document.getElementById(`hour-${index}-temp`);
+        const descEl = document.getElementById(`hour-${index}-desc`);
         
-        const iconClass = getWeatherIcon(hour.icon);
-        const iconColor = getIconColor(hour.icon);
-        const iconElement = document.getElementById(`hour-${index}-icon`);
-        iconElement.className = `hour-icon fas ${iconClass} text-4xl ${iconColor} mb-3`;
+        // Update elements if they exist
+        if (timeEl) timeEl.textContent = timeString;
         
-        document.getElementById(`hour-${index}-temp`).textContent = `${Math.round(hour.temp)}°C`;
+        if (iconEl) {
+            const iconClass = getWeatherIcon(hour.icon);
+            const iconColor = getIconColor(hour.icon);
+            
+            // Remove ALL Font Awesome icon classes first
+            iconEl.classList.remove('fa-sun', 'fa-moon', 'fa-cloud-sun', 'fa-cloud-moon', 'fa-cloud', 'fa-cloud-rain', 'fa-cloud-sun-rain', 'fa-cloud-moon-rain', 'fa-cloud-bolt', 'fa-snowflake', 'fa-smog');
+            // Remove all color classes
+            iconEl.classList.remove('text-yellow-500', 'text-yellow-400', 'text-gray-400', 'text-blue-400', 'text-purple-500', 'text-blue-200', 'text-gray-500', 'text-indigo-400');
+            
+            // Add the new icon and color classes
+            iconEl.classList.add(iconClass);
+            iconEl.classList.add(iconColor);
+        }
+        
+        if (tempEl) tempEl.textContent = `${Math.round(hour.temp)}°C`;
+        
+        if (descEl) {
+            const conditionsText = hour.conditions.charAt(0).toUpperCase() + hour.conditions.slice(1);
+            descEl.textContent = conditionsText;
+        }
     });
 }
 
@@ -614,7 +598,8 @@ async function loadWeather(city) {
         return weatherData;
     } catch (error) {
         console.error('Error loading weather:', error);
-        alert('Error loading weather data. Please check the city name and try again.');
+        console.error('Error stack:', error.stack);
+        alert(`Error loading weather data: ${error.message}`);
     }
 }
 
