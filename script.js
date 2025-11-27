@@ -283,14 +283,28 @@ function getWeatherIcon(iconCode) {
 }
 
 function getIconColor(iconCode) {
+    // Clear sky (01d or 01n) → Yellow
     if (iconCode.startsWith('01')) return 'text-yellow-500';
+    
+    // Few clouds (02d or 02n) → Lighter yellow
     if (iconCode.startsWith('02')) return 'text-yellow-400';
+    
+    // Scattered/broken clouds (03d, 03n, 04d, 04n) → Gray
     if (iconCode.startsWith('03') || iconCode.startsWith('04')) return 'text-gray-400';
+    
+    // Rain/drizzle (09d, 09n, 10d, 10n) → Blue
     if (iconCode.startsWith('09') || iconCode.startsWith('10')) return 'text-blue-400';
+    
+    // Thunderstorm (11d, 11n) → Purple
     if (iconCode.startsWith('11')) return 'text-purple-500';
+    
+    // Snow (13d, 13n) → Light blue
     if (iconCode.startsWith('13')) return 'text-blue-200';
+    
+    // Mist/fog (50d, 50n) → Gray
     if (iconCode.startsWith('50')) return 'text-gray-500';
-    return 'text-gray-400';
+    
+    return 'text-gray-400'; // Default fallback
 }
 
 function formatTime(timestamp, timezoneOffset) {
