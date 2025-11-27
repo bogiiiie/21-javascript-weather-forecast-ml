@@ -495,7 +495,7 @@ function updateTemperatureChart(historicalData, prediction) {
         
         // Add temperature label ABOVE the bar (floating on top, centered, responsive)
         const tempLabel = document.createElement('div');
-        tempLabel.className = 'absolute text-[8px] md:text-sm font-semibold text-gray-400 whitespace-nowrap';
+        tempLabel.className = 'absolute text-xs md:text-sm font-semibold text-blue-600 whitespace-nowrap vertical-label';
         tempLabel.style.bottom = '100%';
         tempLabel.style.left = '50%';
         tempLabel.style.transform = 'translateX(-50%)';
@@ -506,7 +506,7 @@ function updateTemperatureChart(historicalData, prediction) {
         chartContainer.appendChild(bar);
         
         const label = document.createElement('div');
-        label.className = 'flex-1 text-center text-xs';
+        label.className = 'flex-1 text-left vertical-label';
         label.textContent = `D-${historicalData.length - index}`;
         labelsContainer.appendChild(label);
     });
@@ -520,7 +520,7 @@ function updateTemperatureChart(historicalData, prediction) {
     
     // Add temperature label ABOVE the bar (floating on top, centered, responsive)
     const tempLabel = document.createElement('div');
-    tempLabel.className = 'absolute text-[8px] md:text-sm font-semibold text-gray-400 whitespace-nowrap';
+    tempLabel.className = 'absolute text-xs md:text-sm font-semibold text-green-600 whitespace-nowrap vertical-label';
     tempLabel.style.bottom = '100%';
     tempLabel.style.left = '50%';
     tempLabel.style.transform = 'translateX(-50%)';
@@ -531,7 +531,7 @@ function updateTemperatureChart(historicalData, prediction) {
     chartContainer.appendChild(predBar);
     
     const predLabel = document.createElement('div');
-    predLabel.className = 'flex-1 text-center font-bold text-xs';
+    predLabel.className = 'flex-1 text-center font-bold vertical-label';
     predLabel.textContent = 'Tomorrow';
     labelsContainer.appendChild(predLabel);
     
