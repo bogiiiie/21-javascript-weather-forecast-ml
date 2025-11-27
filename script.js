@@ -514,6 +514,13 @@ function updateTemperatureChart(historicalData, prediction) {
         bar.className = 'flex-1 bg-blue-500 rounded-t transition-all duration-500 hover:bg-blue-600 cursor-pointer relative';
         bar.style.height = `${height}%`;
         bar.title = `Day ${historicalData.length - index}: ${data.temp.toFixed(1)}°C`;
+        
+        // Add temperature label on top of bar (visible on mobile)
+        const tempLabel = document.createElement('div');
+        tempLabel.className = 'absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-700 whitespace-nowrap';
+        tempLabel.textContent = `${data.temp.toFixed(1)}°`;
+        bar.appendChild(tempLabel);
+        
         chartContainer.appendChild(bar);
         
         const label = document.createElement('div');
