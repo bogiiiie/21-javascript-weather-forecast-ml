@@ -515,10 +515,14 @@ function updateTemperatureChart(historicalData, prediction) {
         bar.style.height = `${height}%`;
         bar.title = `Day ${historicalData.length - index}: ${data.temp.toFixed(1)}°C`;
         
-        // Add temperature label on top of bar (visible on mobile)
+        // Add temperature label ABOVE the bar (floating on top, centered, responsive)
         const tempLabel = document.createElement('div');
-        tempLabel.className = 'absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-gray-700 whitespace-nowrap';
-        tempLabel.textContent = `${data.temp.toFixed(1)}°`;
+        tempLabel.className = 'absolute text-[8px] md:text-sm font-semibold text-gray-400 whitespace-nowrap';
+        tempLabel.style.bottom = '100%';
+        tempLabel.style.left = '50%';
+        tempLabel.style.transform = 'translateX(-50%)';
+        tempLabel.style.marginBottom = '4px';
+        tempLabel.textContent = `${data.temp.toFixed(1)}°C`;
         bar.appendChild(tempLabel);
         
         chartContainer.appendChild(bar);
@@ -529,12 +533,23 @@ function updateTemperatureChart(historicalData, prediction) {
         labelsContainer.appendChild(label);
     });
     
-    // Create bar for prediction
+    // Create bar for prediction (tomorrow)
     const predHeight = ((prediction - chartMin) / displayRange) * 100;
     const predBar = document.createElement('div');
     predBar.className = 'flex-1 bg-green-500 rounded-t transition-all duration-500 hover:bg-green-600 cursor-pointer relative';
     predBar.style.height = `${predHeight}%`;
     predBar.title = `Tomorrow (Predicted): ${prediction.toFixed(1)}°C`;
+    
+    // Add temperature label ABOVE the bar (floating on top, centered, responsive)
+    const tempLabel = document.createElement('div');
+    tempLabel.className = 'absolute text-[8px] md:text-sm font-semibold text-gray-400 whitespace-nowrap';
+    tempLabel.style.bottom = '100%';
+    tempLabel.style.left = '50%';
+    tempLabel.style.transform = 'translateX(-50%)';
+    tempLabel.style.marginBottom = '4px';
+    tempLabel.textContent = `${prediction.toFixed(1)}°C`;
+    predBar.appendChild(tempLabel);
+    
     chartContainer.appendChild(predBar);
     
     const predLabel = document.createElement('div');
